@@ -167,10 +167,20 @@ function registrarEstudiante(e) {
     recargarUsuarios();
     
     const formData = new FormData(e.target);
+    
+    // Construir nombre completo a partir de los campos separados
+    const nombre = formData.get('nombre').trim();
+    const apellido1 = formData.get('apellido1').trim();
+    const apellido2 = formData.get('apellido2') ? formData.get('apellido2').trim() : '';
+    const nombreCompleto = `${nombre} ${apellido1}${apellido2 ? ' ' + apellido2 : ''}`;
+    
     const estudiante = {
         id: generarId(),
         tipo: 'estudiante',
-        nombre: formData.get('nombre'),
+        nombre: nombre,
+        apellido1: apellido1,
+        apellido2: apellido2,
+        nombreCompleto: nombreCompleto,
         cedula: formData.get('cedula'),
         fechaNacimiento: formData.get('fechaNacimiento'),
         email: formData.get('email'),
@@ -216,10 +226,20 @@ function registrarProfesor(e) {
     recargarUsuarios();
     
     const formData = new FormData(e.target);
+    
+    // Construir nombre completo a partir de los campos separados
+    const nombre = formData.get('nombre').trim();
+    const apellido1 = formData.get('apellido1').trim();
+    const apellido2 = formData.get('apellido2') ? formData.get('apellido2').trim() : '';
+    const nombreCompleto = `${nombre} ${apellido1}${apellido2 ? ' ' + apellido2 : ''}`;
+    
     const profesor = {
         id: generarId(),
         tipo: 'profesor',
-        nombre: formData.get('nombre'),
+        nombre: nombre,
+        apellido1: apellido1,
+        apellido2: apellido2,
+        nombreCompleto: nombreCompleto,
         cedula: formData.get('cedula'),
         fechaNacimiento: formData.get('fechaNacimiento'),
         email: formData.get('email'),
@@ -281,7 +301,7 @@ function iniciarSesion(e) {
         usuarioActual = usuario;
         localStorage.setItem('usuarioActual', JSON.stringify(usuario));
         
-        mostrarNotificacion(`Bienvenido, ${usuario.nombre}`, 'success');
+        mostrarNotificacion(`Bienvenido, ${usuario.nombreCompleto || usuario.nombre}`, 'success');
         closeModal('loginModal');
         
         setTimeout(() => {
@@ -294,13 +314,18 @@ function iniciarSesion(e) {
 
 // Validaciones
 function validarDatosEstudiante(estudiante) {
-    if (!estudiante.nombre || estudiante.nombre.length < 3) {
-        mostrarNotificacion('El nombre debe tener al menos 3 caracteres', 'error');
+    if (!estudiante.nombre || estudiante.nombre.length < 2) {
+        mostrarNotificacion('El nombre debe tener al menos 2 caracteres', 'error');
+        return false;
+    }
+    
+    if (!estudiante.apellido1 || estudiante.apellido1.length < 2) {
+        mostrarNotificacion('El primer apellido debe tener al menos 2 caracteres', 'error');
         return false;
     }
     
     if (!validarCedula(estudiante.cedula)) {
-        mostrarNotificacion('Formato de cédula inválido', 'error');
+        mostrarNotificacion('Formato de cédula inválido (Formato: 12345678-9)', 'error');
         return false;
     }
     
@@ -323,13 +348,18 @@ function validarDatosEstudiante(estudiante) {
 }
 
 function validarDatosProfesor(profesor) {
-    if (!profesor.nombre || profesor.nombre.length < 3) {
-        mostrarNotificacion('El nombre debe tener al menos 3 caracteres', 'error');
+    if (!profesor.nombre || profesor.nombre.length < 2) {
+        mostrarNotificacion('El nombre debe tener al menos 2 caracteres', 'error');
+        return false;
+    }
+    
+    if (!profesor.apellido1 || profesor.apellido1.length < 2) {
+        mostrarNotificacion('El primer apellido debe tener al menos 2 caracteres', 'error');
         return false;
     }
     
     if (!validarCedula(profesor.cedula)) {
-        mostrarNotificacion('Formato de cédula inválido', 'error');
+        mostrarNotificacion('Formato de cédula inválido (Formato: 12345678-9)', 'error');
         return false;
     }
     
@@ -418,7 +448,7 @@ function mostrarDashboard() {
 
 function crearDashboard() {
     const tipo = usuarioActual.tipo;
-    const nombre = usuarioActual.nombre;
+    const nombre = usuarioActual.nombreCompleto || usuarioActual.nombre;
     
     return `
         <!DOCTYPE html>
@@ -702,6 +732,8 @@ function navegarSeccion(seccion) {
 
 function crearContenidoPerfil() {
     const usuario = usuarioActual;
+    const nombreCompleto = usuario.nombreCompleto || usuario.nombre;
+    
     return `
         <div class="profile-container">
             <div class="profile-header">
@@ -709,7 +741,7 @@ function crearContenidoPerfil() {
                     <i class="fas fa-user-circle"></i>
                 </div>
                 <div class="profile-info">
-                    <h2>${usuario.nombre}</h2>
+                    <h2>${nombreCompleto}</h2>
                     <p>${usuario.tipo.charAt(0).toUpperCase() + usuario.tipo.slice(1)}</p>
                     <p><i class="fas fa-envelope"></i> ${usuario.email}</p>
                 </div>
@@ -718,6 +750,27 @@ function crearContenidoPerfil() {
             <div class="profile-details">
                 <h3>Información Personal</h3>
                 <div class="detail-grid">
+                    ${usuario.nombre && usuario.apellido1 ? `
+                        <div class="detail-item">
+                            <label>Nombre:</label>
+                            <span>${usuario.nombre}</span>
+                        </div>
+                        <div class="detail-item">
+                            <label>Primer Apellido:</label>
+                            <span>${usuario.apellido1}</span>
+                        </div>
+                        ${usuario.apellido2 ? `
+                            <div class="detail-item">
+                                <label>Segundo Apellido:</label>
+                                <span>${usuario.apellido2}</span>
+                            </div>
+                        ` : ''}
+                    ` : `
+                        <div class="detail-item">
+                            <label>Nombre Completo:</label>
+                            <span>${nombreCompleto}</span>
+                        </div>
+                    `}
                     <div class="detail-item">
                         <label>Cédula:</label>
                         <span>${usuario.cedula}</span>

@@ -127,27 +127,38 @@
 
             <!-- Formulario de Estudiante -->
             <form id="formEstudiante" class="registro-form active">
-                <div class="form-group">
-                    <label for="nombreEstudiante">Nombre Completo</label>
-                    <input type="text" id="nombreEstudiante" name="nombre" required>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="nombreEstudiante">Nombre</label>
+                        <input type="text" id="nombreEstudiante" name="nombre" required placeholder="Ej: María José">
+                    </div>
+                    <div class="form-group">
+                        <label for="apellido1Estudiante">Primer Apellido</label>
+                        <input type="text" id="apellido1Estudiante" name="apellido1" required placeholder="Ej: García">
+                    </div>
                 </div>
                 
                 <div class="form-row">
                     <div class="form-group">
-                        <label for="cedulaEstudiante">Cédula</label>
-                        <input type="text" id="cedulaEstudiante" name="cedula" required>
+                        <label for="apellido2Estudiante">Segundo Apellido</label>
+                        <input type="text" id="apellido2Estudiante" name="apellido2" placeholder="Ej: Rodríguez (Opcional)">
                     </div>
+                    <div class="form-group">
+                        <label for="cedulaEstudiante">Cédula</label>
+                        <input type="text" id="cedulaEstudiante" name="cedula" required placeholder="12345678-9">
+                    </div>
+                </div>
+                
+                <div class="form-row">
                     <div class="form-group">
                         <label for="fechaNacimiento">Fecha de Nacimiento</label>
                         <input type="date" id="fechaNacimiento" name="fechaNacimiento" required>
                     </div>
-                </div>
-
-                <div class="form-row">
                     <div class="form-group">
                         <label for="emailEstudiante">Email</label>
-                        <input type="email" id="emailEstudiante" name="email" required>
+                        <input type="email" id="emailEstudiante" name="email" required placeholder="estudiante@email.com">
                     </div>
+                </div>
                     <div class="form-group">
                         <label for="telefonoEstudiante">Teléfono</label>
                         <input type="tel" id="telefonoEstudiante" name="telefono" required>
@@ -200,9 +211,26 @@
 
             <!-- Formulario de Profesor -->
             <form id="formProfesor" class="registro-form">
-                <div class="form-group">
-                    <label for="nombreProfesor">Nombre Completo</label>
-                    <input type="text" id="nombreProfesor" name="nombre" required>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="nombreProfesor">Nombre</label>
+                        <input type="text" id="nombreProfesor" name="nombre" required placeholder="Ej: Laura María">
+                    </div>
+                    <div class="form-group">
+                        <label for="apellido1Profesor">Primer Apellido</label>
+                        <input type="text" id="apellido1Profesor" name="apellido1" required placeholder="Ej: Mendoza">
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="apellido2Profesor">Segundo Apellido</label>
+                        <input type="text" id="apellido2Profesor" name="apellido2" placeholder="Ej: Silva (Opcional)">
+                    </div>
+                    <div class="form-group">
+                        <label for="cedulaProfesor">Cédula</label>
+                        <input type="text" id="cedulaProfesor" name="cedula" required placeholder="12345678-9">
+                    </div>
                 </div>
                 
                 <div class="form-row">
