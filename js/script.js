@@ -566,10 +566,12 @@ function crearDashboard() {
                         ${tipo === 'estudiante' ? `
                             <li><a href="#" class="menu-link" data-section="materias"><i class="fas fa-book"></i> Mis Materias</a></li>
                             <li><a href="#" class="menu-link" data-section="horarios"><i class="fas fa-calendar"></i> Horarios</a></li>
+                            <li><a href="#" class="menu-link" data-section="asistencias"><i class="fas fa-calendar-check"></i> Asistencias</a></li>
                         ` : ''}
                         ${tipo === 'profesor' ? `
                             <li><a href="#" class="menu-link" data-section="clases"><i class="fas fa-chalkboard"></i> Mis Clases</a></li>
                             <li><a href="#" class="menu-link" data-section="estudiantes"><i class="fas fa-users"></i> Estudiantes</a></li>
+                            <li><a href="#" class="menu-link" data-section="asistencias"><i class="fas fa-clipboard-check"></i> Asistencias</a></li>
                         ` : ''}
                         <li><a href="#" class="menu-link" data-section="configuracion"><i class="fas fa-cog"></i> Configuración</a></li>
                         <li><a href="#" onclick="cerrarSesion()"><i class="fas fa-sign-out-alt"></i> Cerrar Sesión</a></li>
@@ -684,6 +686,12 @@ function crearContenidoInicio() {
                                 <p>Consulta tu horario de clases semanal</p>
                                 <button class="btn btn-sm btn-primary" onclick="navegarSeccion('horarios')">Ver Horario</button>
                             </div>
+                            <div class="demo-feature-card">
+                                <i class="fas fa-calendar-check"></i>
+                                <h3>Mis Asistencias</h3>
+                                <p>Revisa tu historial de asistencias</p>
+                                <button class="btn btn-sm btn-primary" onclick="navegarSeccion('asistencias')">Ver Asistencias</button>
+                            </div>
                         ` : ''}
                         
                         ${tipo === 'profesor' ? `
@@ -698,6 +706,12 @@ function crearContenidoInicio() {
                                 <h3>Estudiantes</h3>
                                 <p>Lista completa de tus estudiantes</p>
                                 <button class="btn btn-sm btn-primary" onclick="navegarSeccion('estudiantes')">Ver Lista</button>
+                            </div>
+                            <div class="demo-feature-card">
+                                <i class="fas fa-clipboard-check"></i>
+                                <h3>Tomar Asistencia</h3>
+                                <p>Registra la asistencia de tus estudiantes</p>
+                                <button class="btn btn-sm btn-primary" onclick="navegarSeccion('asistencias')">Tomar Asistencia</button>
                             </div>
                         ` : ''}
                         
@@ -778,6 +792,7 @@ function navegarSeccion(seccion) {
         'horarios': 'Horarios',
         'clases': 'Mis Clases',
         'estudiantes': 'Estudiantes',
+        'asistencias': 'Asistencias',
         'configuracion': 'Configuración'
     };
     
@@ -804,6 +819,24 @@ function navegarSeccion(seccion) {
             break;
         case 'estudiantes':
             contentArea.innerHTML = crearContenidoEstudiantes();
+            break;
+        case 'asistencias':
+            if (typeof abrirGestionAsistencias === 'function') {
+                abrirGestionAsistencias();
+            } else {
+                contentArea.innerHTML = '<div class="loading">Cargando sistema de asistencias...</div>';
+                // Cargar el módulo de asistencias si no está disponible
+                if (!document.querySelector('script[src*="asistencias.js"]')) {
+                    const script = document.createElement('script');
+                    script.src = 'js/asistencias.js';
+                    script.onload = () => {
+                        if (typeof abrirGestionAsistencias === 'function') {
+                            abrirGestionAsistencias();
+                        }
+                    };
+                    document.head.appendChild(script);
+                }
+            }
             break;
         case 'configuracion':
             contentArea.innerHTML = crearContenidoConfiguracion();

@@ -1,0 +1,553 @@
+/* Estilos para Sistema de Asistencias */
+
+.asistencias-container {
+    padding: 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.asistencias-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 2px solid #e9ecef;
+}
+
+.asistencias-header h2 {
+    color: #2c3e50;
+    margin: 0;
+}
+
+.fecha-actual {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #6c757d;
+    font-weight: 500;
+}
+
+.fecha-actual i {
+    color: #007bff;
+}
+
+/* Tarjetas de Materias */
+.materias-asistencia {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 3rem;
+}
+
+.materia-card {
+    background: white;
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    border: 1px solid #e9ecef;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.materia-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.15);
+}
+
+.materia-info h3 {
+    color: #2c3e50;
+    margin: 0 0 1rem 0;
+    font-size: 1.25rem;
+}
+
+.materia-info p {
+    margin: 0.5rem 0;
+    color: #6c757d;
+}
+
+.horario-hoy {
+    background: #e8f5e8;
+    padding: 0.75rem;
+    border-radius: 8px;
+    margin: 1rem 0;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.horario-hoy i {
+    color: #28a745;
+}
+
+.lecciones-info {
+    background: #007bff;
+    color: white;
+    padding: 0.2rem 0.5rem;
+    border-radius: 12px;
+    font-size: 0.8rem;
+    margin-left: auto;
+}
+
+.no-clase-hoy {
+    color: #6c757d;
+    font-style: italic;
+    margin: 1rem 0;
+}
+
+.asistencia-controls {
+    margin: 1.5rem 0;
+}
+
+.estudiantes-count {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #6c757d;
+    font-size: 0.9rem;
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid #e9ecef;
+}
+
+/* Modal de Asistencia */
+.modal-large {
+    max-width: 90vw;
+    width: 800px;
+    max-height: 90vh;
+    overflow-y: auto;
+}
+
+.asistencia-form {
+    padding: 1rem;
+}
+
+.form-header {
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 2px solid #e9ecef;
+}
+
+.form-header h2 {
+    color: #2c3e50;
+    margin: 0 0 1rem 0;
+}
+
+.materia-details {
+    display: flex;
+    gap: 2rem;
+    flex-wrap: wrap;
+}
+
+.materia-details p {
+    margin: 0;
+    color: #6c757d;
+}
+
+/* Lista de Estudiantes */
+.lista-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    padding: 1rem;
+    background: #f8f9fa;
+    border-radius: 8px;
+}
+
+.select-all {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.contadores {
+    font-weight: 500;
+    color: #495057;
+}
+
+.estudiantes-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    max-height: 400px;
+    overflow-y: auto;
+    padding: 0.5rem;
+}
+
+.estudiante-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+    background: white;
+    border: 1px solid #e9ecef;
+    border-radius: 8px;
+    transition: background-color 0.2s ease;
+}
+
+.estudiante-item:hover {
+    background: #f8f9fa;
+}
+
+.estudiante-info {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex: 1;
+}
+
+.estudiante-info .avatar {
+    width: 50px;
+    height: 50px;
+    background: #007bff;
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+}
+
+.estudiante-info .datos h4 {
+    margin: 0 0 0.25rem 0;
+    color: #2c3e50;
+}
+
+.estudiante-info .datos p {
+    margin: 0;
+    color: #6c757d;
+    font-size: 0.9rem;
+}
+
+.asistencia-control {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    min-width: 200px;
+}
+
+/* Toggle de Asistencia */
+.toggle-asistencia {
+    position: relative;
+}
+
+.toggle-asistencia input[type="checkbox"] {
+    display: none;
+}
+
+.toggle-label {
+    display: block;
+    width: 120px;
+    height: 40px;
+    background: #dc3545;
+    border-radius: 20px;
+    position: relative;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.toggle-label::before {
+    content: '';
+    position: absolute;
+    width: 36px;
+    height: 36px;
+    background: white;
+    border-radius: 50%;
+    top: 2px;
+    left: 2px;
+    transition: transform 0.3s ease;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.toggle-asistencia input[type="checkbox"]:checked + .toggle-label {
+    background: #28a745;
+}
+
+.toggle-asistencia input[type="checkbox"]:checked + .toggle-label::before {
+    transform: translateX(80px);
+}
+
+.toggle-label .presente,
+.toggle-label .ausente {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: white;
+    pointer-events: none;
+}
+
+.toggle-label .presente {
+    right: 8px;
+}
+
+.toggle-label .ausente {
+    left: 8px;
+}
+
+.form-control-small {
+    width: 100%;
+    padding: 0.5rem;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    font-size: 0.9rem;
+}
+
+/* Historial */
+.asistencia-historial {
+    margin-top: 3rem;
+}
+
+.asistencia-historial h3 {
+    color: #2c3e50;
+    margin-bottom: 1.5rem;
+}
+
+.historial-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1rem;
+}
+
+.historial-item {
+    background: white;
+    padding: 1rem;
+    border-radius: 8px;
+    border: 1px solid #e9ecef;
+}
+
+.historial-info h4 {
+    margin: 0 0 0.5rem 0;
+    color: #2c3e50;
+}
+
+.historial-info p {
+    margin: 0;
+    color: #6c757d;
+    font-size: 0.9rem;
+}
+
+.historial-stats {
+    margin-top: 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.historial-stats .presentes {
+    color: #28a745;
+    font-weight: 500;
+}
+
+.historial-stats .ausentes {
+    color: #dc3545;
+    font-weight: 500;
+}
+
+.porcentaje {
+    background: #007bff;
+    color: white;
+    padding: 0.25rem 0.5rem;
+    border-radius: 12px;
+    font-size: 0.8rem;
+    font-weight: 500;
+}
+
+/* Asistencias de Estudiante */
+.asistencias-estudiante {
+    padding: 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.resumen-general {
+    margin-bottom: 3rem;
+}
+
+.asistencia-card {
+    text-align: center;
+}
+
+.asistencia-card h4 {
+    margin: 0 0 1rem 0;
+    color: #2c3e50;
+    font-size: 1rem;
+}
+
+.asistencia-stats {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+}
+
+.asistencia-stats .porcentaje {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: white;
+}
+
+.asistencia-stats .porcentaje.bueno {
+    background: #28a745;
+}
+
+.asistencia-stats .porcentaje.regular {
+    background: #ffc107;
+    color: #212529;
+}
+
+.asistencia-stats .porcentaje.malo {
+    background: #dc3545;
+}
+
+.asistencia-stats .detalles p {
+    margin: 0.25rem 0;
+    font-size: 0.9rem;
+    color: #6c757d;
+}
+
+/* Detalle por Materia */
+.materia-detalle {
+    background: white;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+    border-radius: 8px;
+    border: 1px solid #e9ecef;
+}
+
+.materia-detalle h4 {
+    color: #2c3e50;
+    margin: 0 0 1rem 0;
+}
+
+.horarios-info {
+    margin-bottom: 1.5rem;
+    padding: 1rem;
+    background: #f8f9fa;
+    border-radius: 6px;
+}
+
+.horarios-info p {
+    margin: 0 0 0.5rem 0;
+    font-weight: 500;
+    color: #495057;
+}
+
+.horario-item {
+    display: inline-block;
+    margin: 0.25rem 0.5rem 0.25rem 0;
+    padding: 0.25rem 0.5rem;
+    background: #007bff;
+    color: white;
+    border-radius: 12px;
+    font-size: 0.8rem;
+}
+
+/* Tabla de Asistencia */
+.asistencia-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1rem;
+}
+
+.asistencia-table th,
+.asistencia-table td {
+    padding: 0.75rem;
+    text-align: left;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.asistencia-table th {
+    background: #f8f9fa;
+    font-weight: 600;
+    color: #495057;
+}
+
+.asistencia-table tr.presente {
+    background-color: #f8fff8;
+}
+
+.asistencia-table tr.ausente {
+    background-color: #fff8f8;
+}
+
+.estado-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    padding: 0.25rem 0.5rem;
+    border-radius: 12px;
+    font-size: 0.8rem;
+    font-weight: 500;
+}
+
+.estado-badge.presente {
+    background: #d4edda;
+    color: #155724;
+}
+
+.estado-badge.ausente {
+    background: #f8d7da;
+    color: #721c24;
+}
+
+.no-registros {
+    text-align: center;
+    color: #6c757d;
+    font-style: italic;
+    margin: 2rem 0;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .asistencias-header {
+        flex-direction: column;
+        gap: 1rem;
+        text-align: center;
+    }
+    
+    .materias-asistencia {
+        grid-template-columns: 1fr;
+    }
+    
+    .estudiante-item {
+        flex-direction: column;
+        gap: 1rem;
+        text-align: center;
+    }
+    
+    .asistencia-control {
+        min-width: auto;
+        width: 100%;
+    }
+    
+    .lista-header {
+        flex-direction: column;
+        gap: 1rem;
+    }
+    
+    .historial-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .materia-details {
+        justify-content: center;
+        text-align: center;
+    }
+    
+    .asistencia-table {
+        font-size: 0.9rem;
+    }
+    
+    .asistencia-table th,
+    .asistencia-table td {
+        padding: 0.5rem;
+    }
+}
