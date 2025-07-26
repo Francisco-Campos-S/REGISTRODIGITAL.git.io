@@ -629,9 +629,75 @@ document.addEventListener('DOMContentLoaded', function() {
     inicializarDatosAsistencia();
 });
 
+// Funciones para crear interfaces
+function crearInterfazProfesor() {
+    console.log('🎓 Creando interfaz de profesor para asistencias...');
+    return crearContenidoAsistencias();
+}
+
+function crearInterfazEstudiante() {
+    console.log('👨‍🎓 Creando interfaz de estudiante para asistencias...');
+    return crearContenidoAsistenciasEstudiante();
+}
+
+function inicializarInterfazProfesor() {
+    console.log('🔧 Inicializando interfaz de profesor...');
+    // Aquí se pueden agregar event listeners específicos para profesores
+}
+
+function inicializarInterfazEstudiante() {
+    console.log('🔧 Inicializando interfaz de estudiante...');
+    // Aquí se pueden agregar event listeners específicos para estudiantes
+}
+
+function crearDetalleAsistenciaMateria(materia) {
+    const asistenciasMateria = asistencias.filter(a => 
+        a.materiaId === materia.id && a.estudianteId === usuarioActual.id
+    );
+    
+    asistenciasMateria.sort((a, b) => new Date(b.fecha) - new Date(a.fecha));
+    
+    return `
+        <div class="materia-detalle">
+            <h4>${materia.nombre} (${materia.codigo})</h4>
+            ${asistenciasMateria.length === 0 ? 
+                '<p class="no-data-small">No hay registros de asistencia</p>' :
+                `<div class="asistencias-lista">
+                    ${asistenciasMateria.map(asistencia => `
+                        <div class="asistencia-item ${asistencia.presente ? 'presente' : 'ausente'}">
+                            <div class="fecha">
+                                <i class="fas fa-calendar"></i>
+                                ${new Date(asistencia.fecha).toLocaleDateString('es-ES')}
+                            </div>
+                            <div class="estado">
+                                <i class="fas fa-${asistencia.presente ? 'check-circle' : 'times-circle'}"></i>
+                                ${asistencia.presente ? 'Presente' : 'Ausente'}
+                            </div>
+                            ${asistencia.observaciones ? `
+                                <div class="observaciones">
+                                    <small>${asistencia.observaciones}</small>
+                                </div>
+                            ` : ''}
+                        </div>
+                    `).join('')}
+                </div>`
+            }
+        </div>
+    `;
+}
+
+// Función auxiliar para generar ID
+function generarId() {
+    return Date.now().toString(36) + Math.random().toString(36).substr(2);
+}
+
 // Exportar funciones para uso global
 window.abrirAsistencia = abrirAsistencia;
 window.cerrarModalAsistencia = cerrarModalAsistencia;
 window.toggleTodosPresentes = toggleTodosPresentes;
 window.actualizarContadores = actualizarContadores;
 window.guardarAsistencia = guardarAsistencia;
+window.crearInterfazProfesor = crearInterfazProfesor;
+window.crearInterfazEstudiante = crearInterfazEstudiante;
+window.inicializarInterfazProfesor = inicializarInterfazProfesor;
+window.inicializarInterfazEstudiante = inicializarInterfazEstudiante;
