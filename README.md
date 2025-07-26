@@ -4,7 +4,7 @@ Un sistema completo de registro académico inspirado en RegistraProfe, desarroll
 
 ## 🌐 **Demo en Vivo**
 
-**[Ver Demo en GitHub Pages](https://francisco-campos-s.github.io/Generador_Carnets_CTP.git.io/)**
+**[Ver Demo en GitHub Pages](https://francisco-campos-s.github.io/REGISTRODIGITAL.git.io/)**
 
 ### 🔑 Credenciales de Prueba
 

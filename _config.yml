@@ -1,7 +1,7 @@
 # Configuración para GitHub Pages
 title: "RegistroDigital - Sistema de Registro Académico"
 description: "Plataforma moderna para el registro y gestión de estudiantes y profesores"
-baseurl: "" # para GitHub Pages
+baseurl: "/REGISTRODIGITAL.git.io" # para GitHub Pages
 url: "https://francisco-campos-s.github.io" # tu URL de GitHub Pages
 
 # Jekyll configuration

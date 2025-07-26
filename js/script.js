@@ -4,7 +4,7 @@ let usuarioActual = JSON.parse(localStorage.getItem('usuarioActual')) || null;
 
 // Configuración para GitHub Pages
 const isGitHubPages = window.location.hostname.includes('github.io');
-const basePath = isGitHubPages ? '/Generador_Carnets_CTP.git.io' : '';
+const basePath = isGitHubPages ? '/REGISTRODIGITAL.git.io' : '';
 
 // Inicialización
 document.addEventListener('DOMContentLoaded', function() {
