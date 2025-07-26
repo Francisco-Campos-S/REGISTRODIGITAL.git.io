@@ -57,13 +57,16 @@ function configurarGitHubPages() {
 }
 
 function cargarDatosEjemplo() {
-    // Si no hay usuarios, cargar algunos datos de ejemplo
-    if (usuarios.length === 0) {
+    // Solo cargar datos de ejemplo si no estamos en GitHub Pages y no hay usuarios demo
+    if (!isGitHubPages && usuarios.length === 0) {
         const usuariosEjemplo = [
             {
-                id: 'demo-student-1',
+                id: 'local-student-1',
                 tipo: 'estudiante',
-                nombre: 'Ana García Rodríguez',
+                nombre: 'Ana',
+                apellido1: 'García',
+                apellido2: 'Rodríguez',
+                nombreCompleto: 'Ana García Rodríguez',
                 cedula: '12345678-9',
                 fechaNacimiento: '2000-05-15',
                 email: 'ana.garcia@demo.com',
@@ -76,9 +79,12 @@ function cargarDatosEjemplo() {
                 estado: 'activo'
             },
             {
-                id: 'demo-teacher-1',
+                id: 'local-teacher-1',
                 tipo: 'profesor',
-                nombre: 'Dr. Carlos Martínez López',
+                nombre: 'Carlos',
+                apellido1: 'Martínez',
+                apellido2: 'López',
+                nombreCompleto: 'Dr. Carlos Martínez López',
                 cedula: '98765432-1',
                 fechaNacimiento: '1975-08-22',
                 email: 'carlos.martinez@demo.com',
@@ -96,21 +102,49 @@ function cargarDatosEjemplo() {
         usuarios = usuariosEjemplo;
         localStorage.setItem('usuarios', JSON.stringify(usuarios));
         
-        // Mostrar información sobre los usuarios demo
+        // Mostrar información sobre los usuarios demo solo en desarrollo local
         setTimeout(() => {
-            mostrarNotificacion('Se han cargado usuarios de demostración. Email: ana.garcia@demo.com / carlos.martinez@demo.com, Contraseña: demo123', 'info', { duration: 8000 });
+            mostrarNotificacion('Se han cargado usuarios de demostración local. Email: ana.garcia@demo.com / carlos.martinez@demo.com, Contraseña: demo123', 'info', { duration: 8000 });
         }, 2000);
     }
 }
 
 function configurarEventListeners() {
-    // Formularios de registro
-    document.getElementById('formEstudiante').addEventListener('submit', registrarEstudiante);
-    document.getElementById('formProfesor').addEventListener('submit', registrarProfesor);
-    document.getElementById('loginForm').addEventListener('submit', iniciarSesion);
+    console.log('🔧 Configurando event listeners...');
     
-    // Validación en tiempo real
-    configurarValidacionTiempoReal();
+    try {
+        // Verificar que los elementos existan antes de agregar listeners
+        const formEstudiante = document.getElementById('formEstudiante');
+        const formProfesor = document.getElementById('formProfesor');
+        const loginForm = document.getElementById('loginForm');
+        
+        if (formEstudiante) {
+            formEstudiante.addEventListener('submit', registrarEstudiante);
+            console.log('✅ Event listener agregado a formEstudiante');
+        } else {
+            console.error('❌ No se encontró formEstudiante');
+        }
+        
+        if (formProfesor) {
+            formProfesor.addEventListener('submit', registrarProfesor);
+            console.log('✅ Event listener agregado a formProfesor');
+        } else {
+            console.error('❌ No se encontró formProfesor');
+        }
+        
+        if (loginForm) {
+            loginForm.addEventListener('submit', iniciarSesion);
+            console.log('✅ Event listener agregado a loginForm');
+        } else {
+            console.error('❌ No se encontró loginForm');
+        }
+        
+        // Validación en tiempo real
+        configurarValidacionTiempoReal();
+        
+    } catch (error) {
+        console.error('❌ Error configurando event listeners:', error);
+    }
 }
 
 // Funciones de modal
@@ -163,59 +197,85 @@ function selectUserType(tipo) {
 function registrarEstudiante(e) {
     e.preventDefault();
     
-    // Recargar usuarios actuales desde localStorage
-    recargarUsuarios();
+    console.log('🔄 Iniciando registro de estudiante...');
     
-    const formData = new FormData(e.target);
-    
-    // Construir nombre completo a partir de los campos separados
-    const nombre = formData.get('nombre').trim();
-    const apellido1 = formData.get('apellido1').trim();
-    const apellido2 = formData.get('apellido2') ? formData.get('apellido2').trim() : '';
-    const nombreCompleto = `${nombre} ${apellido1}${apellido2 ? ' ' + apellido2 : ''}`;
-    
-    const estudiante = {
-        id: generarId(),
-        tipo: 'estudiante',
-        nombre: nombre,
-        apellido1: apellido1,
-        apellido2: apellido2,
-        nombreCompleto: nombreCompleto,
-        cedula: formData.get('cedula'),
-        fechaNacimiento: formData.get('fechaNacimiento'),
-        email: formData.get('email'),
-        telefono: formData.get('telefono'),
-        direccion: formData.get('direccion'),
-        carrera: formData.get('carrera'),
-        semestre: formData.get('semestre'),
-        password: formData.get('password'),
-        fechaRegistro: new Date().toISOString(),
-        estado: 'activo'
-    };
-    
-    // Validar datos
-    if (!validarDatosEstudiante(estudiante)) {
-        return;
+    try {
+        // Recargar usuarios actuales desde localStorage
+        recargarUsuarios();
+        console.log('👥 Usuarios actuales:', usuarios.length);
+        
+        const formData = new FormData(e.target);
+        
+        // Construir nombre completo a partir de los campos separados
+        const nombre = formData.get('nombre')?.trim() || '';
+        const apellido1 = formData.get('apellido1')?.trim() || '';
+        const apellido2 = formData.get('apellido2')?.trim() || '';
+        const nombreCompleto = `${nombre} ${apellido1}${apellido2 ? ' ' + apellido2 : ''}`;
+        
+        console.log('📝 Datos del formulario:', {
+            nombre, apellido1, apellido2, nombreCompleto,
+            email: formData.get('email'),
+            cedula: formData.get('cedula')
+        });
+        
+        // Validar que los campos requeridos no estén vacíos
+        if (!nombre || !apellido1) {
+            mostrarNotificacion('Nombre y primer apellido son obligatorios', 'error');
+            return;
+        }
+        
+        const estudiante = {
+            id: generarId(),
+            tipo: 'estudiante',
+            nombre: nombre,
+            apellido1: apellido1,
+            apellido2: apellido2,
+            nombreCompleto: nombreCompleto,
+            cedula: formData.get('cedula')?.trim() || '',
+            fechaNacimiento: formData.get('fechaNacimiento') || '',
+            email: formData.get('email')?.trim() || '',
+            telefono: formData.get('telefono')?.trim() || '',
+            direccion: formData.get('direccion')?.trim() || '',
+            carrera: formData.get('carrera') || '',
+            semestre: formData.get('semestre') || '',
+            password: formData.get('password') || '',
+            fechaRegistro: new Date().toISOString(),
+            estado: 'activo'
+        };
+        
+        console.log('👤 Estudiante a registrar:', estudiante);
+        
+        // Validar datos
+        if (!validarDatosEstudiante(estudiante)) {
+            console.log('❌ Validación falló');
+            return;
+        }
+        
+        // Verificar si el usuario ya existe
+        if (usuarios.find(u => u.email === estudiante.email || u.cedula === estudiante.cedula)) {
+            mostrarNotificacion('Ya existe un usuario con este email o cédula', 'error');
+            console.log('❌ Usuario ya existe');
+            return;
+        }
+        
+        // Guardar estudiante
+        usuarios.push(estudiante);
+        localStorage.setItem('usuarios', JSON.stringify(usuarios));
+        
+        console.log('✅ Estudiante registrado exitosamente');
+        mostrarNotificacion('Estudiante registrado exitosamente', 'success');
+        e.target.reset();
+        closeModal('registroModal');
+        
+        // Opcional: auto-login
+        setTimeout(() => {
+            showLogin();
+        }, 1500);
+        
+    } catch (error) {
+        console.error('❌ Error en registro:', error);
+        mostrarNotificacion('Error al registrar estudiante: ' + error.message, 'error');
     }
-    
-    // Verificar si el usuario ya existe
-    if (usuarios.find(u => u.email === estudiante.email || u.cedula === estudiante.cedula)) {
-        mostrarNotificacion('Ya existe un usuario con este email o cédula', 'error');
-        return;
-    }
-    
-    // Guardar estudiante
-    usuarios.push(estudiante);
-    localStorage.setItem('usuarios', JSON.stringify(usuarios));
-    
-    mostrarNotificacion('Estudiante registrado exitosamente', 'success');
-    e.target.reset();
-    closeModal('registroModal');
-    
-    // Opcional: auto-login
-    setTimeout(() => {
-        showLogin();
-    }, 1500);
 }
 
 // Registro de profesor
@@ -314,36 +374,57 @@ function iniciarSesion(e) {
 
 // Validaciones
 function validarDatosEstudiante(estudiante) {
+    console.log('🔍 Validando datos del estudiante...');
+    
     if (!estudiante.nombre || estudiante.nombre.length < 2) {
+        console.log('❌ Nombre inválido:', estudiante.nombre);
         mostrarNotificacion('El nombre debe tener al menos 2 caracteres', 'error');
         return false;
     }
     
     if (!estudiante.apellido1 || estudiante.apellido1.length < 2) {
+        console.log('❌ Primer apellido inválido:', estudiante.apellido1);
         mostrarNotificacion('El primer apellido debe tener al menos 2 caracteres', 'error');
         return false;
     }
     
-    if (!validarCedula(estudiante.cedula)) {
+    if (!estudiante.cedula || !validarCedula(estudiante.cedula)) {
+        console.log('❌ Cédula inválida:', estudiante.cedula);
         mostrarNotificacion('Formato de cédula inválido (Formato: 12345678-9)', 'error');
         return false;
     }
     
-    if (!validarEmail(estudiante.email)) {
+    if (!estudiante.email || !validarEmail(estudiante.email)) {
+        console.log('❌ Email inválido:', estudiante.email);
         mostrarNotificacion('Formato de email inválido', 'error');
         return false;
     }
     
-    if (!validarTelefono(estudiante.telefono)) {
+    if (!estudiante.telefono || !validarTelefono(estudiante.telefono)) {
+        console.log('❌ Teléfono inválido:', estudiante.telefono);
         mostrarNotificacion('Formato de teléfono inválido', 'error');
         return false;
     }
     
     if (!estudiante.password || estudiante.password.length < 6) {
+        console.log('❌ Contraseña inválida');
         mostrarNotificacion('La contraseña debe tener al menos 6 caracteres', 'error');
         return false;
     }
     
+    if (!estudiante.carrera) {
+        console.log('❌ Carrera no seleccionada');
+        mostrarNotificacion('Debe seleccionar una carrera', 'error');
+        return false;
+    }
+    
+    if (!estudiante.semestre) {
+        console.log('❌ Semestre no seleccionado');
+        mostrarNotificacion('Debe seleccionar un semestre', 'error');
+        return false;
+    }
+    
+    console.log('✅ Todos los datos son válidos');
     return true;
 }
 
