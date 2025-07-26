@@ -1,0 +1,1 @@
+# REGISTRODIGITAL.git.io
