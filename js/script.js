@@ -150,7 +150,7 @@ function configurarEventListeners() {
 // Funciones de modal
 function showRegistro() {
     document.getElementById('registroModal').style.display = 'block';
-    document.body.style.overflow = 'hidden';
+    document.body.style.overflow = 'auto';
 }
 
 function showLogin() {
@@ -160,7 +160,8 @@ function showLogin() {
 
 function closeModal(modalId) {
     document.getElementById(modalId).style.display = 'none';
-    document.body.style.overflow = 'auto';
+    document.body.style.overflowY = 'auto';
+    document.body.style.overscrollBehaviorY = 'auto';
 }
 
 // Cerrar modal al hacer clic fuera
@@ -175,55 +176,49 @@ window.onclick = function(event) {
 
 // Selección de tipo de usuario
 function selectUserType(tipo) {
-    // Actualizar botones
-    document.querySelectorAll('.type-btn').forEach(btn => {
-        btn.classList.remove('active');
-    });
-    event.target.closest('.type-btn').classList.add('active');
-    
-    // Mostrar formulario correspondiente
-    document.querySelectorAll('.registro-form').forEach(form => {
-        form.classList.remove('active');
-    });
-    
+    // Actualizar botones visuales
+    document.getElementById('btnEstudiante').classList.remove('active');
+    document.getElementById('btnProfesor').classList.remove('active');
     if (tipo === 'estudiante') {
-        document.getElementById('formEstudiante').classList.add('active');
+        document.getElementById('btnEstudiante').classList.add('active');
+        document.getElementById('formEstudiante').style.display = 'block';
+        document.getElementById('formProfesor').style.display = 'none';
+        document.getElementById('btnRegistrarEstudiante').style.display = 'block';
+        document.getElementById('btnRegistrarProfesor').style.display = 'none';
     } else {
-        document.getElementById('formProfesor').classList.add('active');
+        document.getElementById('btnProfesor').classList.add('active');
+        document.getElementById('formProfesor').style.display = 'block';
+        document.getElementById('formEstudiante').style.display = 'none';
+        document.getElementById('btnRegistrarEstudiante').style.display = 'none';
+        document.getElementById('btnRegistrarProfesor').style.display = 'block';
     }
 }
 
 // Registro de estudiante
 function registrarEstudiante(e) {
     e.preventDefault();
-    
-    console.log('🔄 Iniciando registro de estudiante...');
-    
+    console.log('🔄 [TEST] submit registrarEstudiante disparado');
+    if (!document.getElementById('formEstudiante').offsetParent) {
+        mostrarNotificacion('El formulario de estudiante NO está visible', 'error');
+        console.error('❌ [TEST] El formulario de estudiante NO está visible');
+    }
     try {
-        // Recargar usuarios actuales desde localStorage
         recargarUsuarios();
-        console.log('👥 Usuarios actuales:', usuarios.length);
-        
+        console.log('👥 [TEST] Usuarios actuales:', usuarios.length);
         const formData = new FormData(e.target);
-        
-        // Construir nombre completo a partir de los campos separados
         const nombre = formData.get('nombre')?.trim() || '';
         const apellido1 = formData.get('apellido1')?.trim() || '';
         const apellido2 = formData.get('apellido2')?.trim() || '';
         const nombreCompleto = `${nombre} ${apellido1}${apellido2 ? ' ' + apellido2 : ''}`;
-        
-        console.log('📝 Datos del formulario:', {
+        console.log('📝 [TEST] Datos del formulario:', {
             nombre, apellido1, apellido2, nombreCompleto,
             email: formData.get('email'),
             cedula: formData.get('cedula')
         });
-        
-        // Validar que los campos requeridos no estén vacíos
         if (!nombre || !apellido1) {
             mostrarNotificacion('Nombre y primer apellido son obligatorios', 'error');
             return;
         }
-        
         const estudiante = {
             id: generarId(),
             tipo: 'estudiante',
@@ -242,38 +237,27 @@ function registrarEstudiante(e) {
             fechaRegistro: new Date().toISOString(),
             estado: 'activo'
         };
-        
-        console.log('👤 Estudiante a registrar:', estudiante);
-        
-        // Validar datos
+        console.log('👤 [TEST] Estudiante a registrar:', estudiante);
         if (!validarDatosEstudiante(estudiante)) {
-            console.log('❌ Validación falló');
+            console.log('❌ [TEST] Validación falló');
             return;
         }
-        
-        // Verificar si el usuario ya existe
         if (usuarios.find(u => u.email === estudiante.email || u.cedula === estudiante.cedula)) {
             mostrarNotificacion('Ya existe un usuario con este email o cédula', 'error');
-            console.log('❌ Usuario ya existe');
+            console.log('❌ [TEST] Usuario ya existe');
             return;
         }
-        
-        // Guardar estudiante
         usuarios.push(estudiante);
         localStorage.setItem('usuarios', JSON.stringify(usuarios));
-        
-        console.log('✅ Estudiante registrado exitosamente');
+        console.log('✅ [TEST] Estudiante registrado exitosamente');
         mostrarNotificacion('Estudiante registrado exitosamente', 'success');
         e.target.reset();
         closeModal('registroModal');
-        
-        // Opcional: auto-login
         setTimeout(() => {
             showLogin();
         }, 1500);
-        
     } catch (error) {
-        console.error('❌ Error en registro:', error);
+        console.error('❌ [TEST] Error en registro:', error);
         mostrarNotificacion('Error al registrar estudiante: ' + error.message, 'error');
     }
 }
@@ -281,61 +265,63 @@ function registrarEstudiante(e) {
 // Registro de profesor
 function registrarProfesor(e) {
     e.preventDefault();
-    
-    // Recargar usuarios actuales desde localStorage
-    recargarUsuarios();
-    
-    const formData = new FormData(e.target);
-    
-    // Construir nombre completo a partir de los campos separados
-    const nombre = formData.get('nombre').trim();
-    const apellido1 = formData.get('apellido1').trim();
-    const apellido2 = formData.get('apellido2') ? formData.get('apellido2').trim() : '';
-    const nombreCompleto = `${nombre} ${apellido1}${apellido2 ? ' ' + apellido2 : ''}`;
-    
-    const profesor = {
-        id: generarId(),
-        tipo: 'profesor',
-        nombre: nombre,
-        apellido1: apellido1,
-        apellido2: apellido2,
-        nombreCompleto: nombreCompleto,
-        cedula: formData.get('cedula'),
-        fechaNacimiento: formData.get('fechaNacimiento'),
-        email: formData.get('email'),
-        telefono: formData.get('telefono'),
-        direccion: formData.get('direccion'),
-        especialidad: formData.get('especialidad'),
-        titulo: formData.get('titulo'),
-        experiencia: formData.get('experiencia'),
-        password: formData.get('password'),
-        fechaRegistro: new Date().toISOString(),
-        estado: 'activo'
-    };
-    
-    // Validar datos
-    if (!validarDatosProfesor(profesor)) {
-        return;
+    console.log('🔄 [TEST] submit registrarProfesor disparado');
+    if (!document.getElementById('formProfesor').offsetParent) {
+        mostrarNotificacion('El formulario de profesor NO está visible', 'error');
+        console.error('❌ [TEST] El formulario de profesor NO está visible');
     }
-    
-    // Verificar si el usuario ya existe
-    if (usuarios.find(u => u.email === profesor.email || u.cedula === profesor.cedula)) {
-        mostrarNotificacion('Ya existe un usuario con este email o cédula', 'error');
-        return;
+    try {
+        recargarUsuarios();
+        console.log('👥 [TEST] Usuarios actuales:', usuarios.length);
+        const formData = new FormData(e.target);
+        const nombre = formData.get('nombre').trim();
+        const apellido1 = formData.get('apellido1').trim();
+        const apellido2 = formData.get('apellido2') ? formData.get('apellido2').trim() : '';
+        const nombreCompleto = `${nombre} ${apellido1}${apellido2 ? ' ' + apellido2 : ''}`;
+        const profesor = {
+            id: generarId(),
+            tipo: 'profesor',
+            nombre: nombre,
+            apellido1: apellido1,
+            apellido2: apellido2,
+            nombreCompleto: nombreCompleto,
+            cedula: formData.get('cedula'),
+            fechaNacimiento: formData.get('fechaNacimiento'),
+            email: formData.get('email'),
+            telefono: formData.get('telefono'),
+            direccion: formData.get('direccion'),
+            especialidad: formData.get('especialidad'),
+            titulo: formData.get('titulo'),
+            experiencia: formData.get('experiencia'),
+            password: formData.get('password'),
+            fechaRegistro: new Date().toISOString(),
+            estado: 'activo'
+        };
+        delete profesor.carrera;
+        delete profesor.semestre;
+        console.log('👤 [TEST] Profesor a registrar:', profesor);
+        if (!validarDatosProfesor(profesor)) {
+            console.log('❌ [TEST] Validación falló');
+            return;
+        }
+        if (usuarios.find(u => u.email === profesor.email || u.cedula === profesor.cedula)) {
+            mostrarNotificacion('Ya existe un usuario con este email o cédula', 'error');
+            console.log('❌ [TEST] Usuario ya existe');
+            return;
+        }
+        usuarios.push(profesor);
+        localStorage.setItem('usuarios', JSON.stringify(usuarios));
+        console.log('✅ [TEST] Profesor registrado exitosamente');
+        mostrarNotificacion('Profesor registrado exitosamente', 'success');
+        e.target.reset();
+        closeModal('registroModal');
+        setTimeout(() => {
+            showLogin();
+        }, 1500);
+    } catch (error) {
+        console.error('❌ [TEST] Error en registro:', error);
+        mostrarNotificacion('Error al registrar profesor: ' + error.message, 'error');
     }
-    
-    // Guardar profesor
-    usuarios.push(profesor);
-    localStorage.setItem('usuarios', JSON.stringify(usuarios));
-    
-    mostrarNotificacion('Profesor registrado exitosamente', 'success');
-    e.target.reset();
-    closeModal('registroModal');
-    
-    // Opcional: auto-login
-    setTimeout(() => {
-        showLogin();
-    }, 1500);
 }
 
 // Iniciar sesión
@@ -360,10 +346,15 @@ function iniciarSesion(e) {
     if (usuario) {
         usuarioActual = usuario;
         localStorage.setItem('usuarioActual', JSON.stringify(usuario));
-        
         mostrarNotificacion(`Bienvenido, ${usuario.nombreCompleto || usuario.nombre}`, 'success');
         closeModal('loginModal');
-        
+        // Al loguear, ocultar cualquier formulario de registro
+        var registroModal = document.getElementById('registroModal');
+        if (registroModal) registroModal.style.display = 'none';
+        var formEst = document.getElementById('formEstudiante');
+        var formProf = document.getElementById('formProfesor');
+        if (formEst) formEst.style.display = 'none';
+        if (formProf) formProf.style.display = 'none';
         setTimeout(() => {
             mostrarDashboard();
         }, 1500);

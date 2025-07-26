@@ -37,6 +37,8 @@ switch ($method) {
             registrarUsuario();
         } elseif ($segments[0] == 'api' && $segments[1] == 'login') {
             iniciarSesion();
+        } elseif ($segments[0] == 'api' && $segments[1] == 'asistencia') {
+            registrarAsistencia();
         }
         break;
     
@@ -45,18 +47,24 @@ switch ($method) {
             obtenerUsuarios();
         } elseif ($segments[0] == 'api' && $segments[1] == 'usuario' && isset($segments[2])) {
             obtenerUsuario($segments[2]);
+        } elseif ($segments[0] == 'api' && $segments[1] == 'asistencia' && isset($segments[2])) {
+            obtenerAsistencia($segments[2]);
         }
         break;
     
     case 'PUT':
         if ($segments[0] == 'api' && $segments[1] == 'usuario' && isset($segments[2])) {
             actualizarUsuario($segments[2]);
+        } elseif ($segments[0] == 'api' && $segments[1] == 'asistencia' && isset($segments[2])) {
+            actualizarAsistencia($segments[2]);
         }
         break;
     
     case 'DELETE':
         if ($segments[0] == 'api' && $segments[1] == 'usuario' && isset($segments[2])) {
             eliminarUsuario($segments[2]);
+        } elseif ($segments[0] == 'api' && $segments[1] == 'asistencia' && isset($segments[2])) {
+            eliminarAsistencia($segments[2]);
         }
         break;
     
@@ -69,10 +77,9 @@ switch ($method) {
 
 function registrarUsuario() {
     global $pdo;
-    
     $input = json_decode(file_get_contents('php://input'), true);
-    
-    // Validar datos requeridos
+    // Validar datos requeridos y tipo
+    $tiposValidos = ['estudiante', 'profesor', 'admin'];
     $camposRequeridos = ['nombre', 'cedula', 'email', 'password', 'tipo'];
     foreach ($camposRequeridos as $campo) {
         if (!isset($input[$campo]) || empty($input[$campo])) {
@@ -81,51 +88,65 @@ function registrarUsuario() {
             return;
         }
     }
-    
+    if (!in_array($input['tipo'], $tiposValidos)) {
+        http_response_code(400);
+        echo json_encode(['error' => 'Tipo de usuario inválido']);
+        return;
+    }
+    // Validación y SQL por tipo de usuario
     // Verificar si el usuario ya existe
     $stmt = $pdo->prepare("SELECT id FROM usuarios WHERE email = ? OR cedula = ?");
     $stmt->execute([$input['email'], $input['cedula']]);
-    
     if ($stmt->rowCount() > 0) {
         http_response_code(409);
         echo json_encode(['error' => 'Usuario ya existe con este email o cédula']);
         return;
     }
-    
-    // Hash de la contraseña
     $passwordHash = password_hash($input['password'], PASSWORD_DEFAULT);
-    
     try {
-        $sql = "INSERT INTO usuarios (nombre, cedula, email, password, tipo, telefono, direccion, fecha_nacimiento, fecha_registro, estado";
-        $valores = [$input['nombre'], $input['cedula'], $input['email'], $passwordHash, $input['tipo'], 
-                   $input['telefono'] ?? null, $input['direccion'] ?? null, $input['fechaNacimiento'] ?? null, 
-                   date('Y-m-d H:i:s'), 'activo'];
-        
-        // Campos específicos según tipo de usuario
         if ($input['tipo'] == 'estudiante') {
-            $sql .= ", carrera, semestre";
-            $valores[] = $input['carrera'] ?? null;
-            $valores[] = $input['semestre'] ?? null;
+            // Validación extra para estudiante
+            if (empty($input['carrera']) || empty($input['semestre'])) {
+                http_response_code(400);
+                echo json_encode(['error' => 'Carrera y semestre son requeridos para estudiantes']);
+                return;
+            }
+            $sql = "INSERT INTO usuarios (nombre, cedula, email, password, tipo, telefono, direccion, fecha_nacimiento, fecha_registro, estado, carrera, semestre) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            $valores = [
+                $input['nombre'], $input['cedula'], $input['email'], $passwordHash, $input['tipo'],
+                $input['telefono'] ?? null, $input['direccion'] ?? null, $input['fechaNacimiento'] ?? null,
+                date('Y-m-d H:i:s'), 'activo', $input['carrera'], $input['semestre']
+            ];
         } elseif ($input['tipo'] == 'profesor') {
-            $sql .= ", especialidad, titulo, experiencia";
-            $valores[] = $input['especialidad'] ?? null;
-            $valores[] = $input['titulo'] ?? null;
-            $valores[] = $input['experiencia'] ?? null;
+            // Validación extra para profesor
+            if (empty($input['especialidad']) || empty($input['titulo'])) {
+                http_response_code(400);
+                echo json_encode(['error' => 'Especialidad y título son requeridos para profesores']);
+                return;
+            }
+            $sql = "INSERT INTO usuarios (nombre, cedula, email, password, tipo, telefono, direccion, fecha_nacimiento, fecha_registro, estado, especialidad, titulo, experiencia) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            $valores = [
+                $input['nombre'], $input['cedula'], $input['email'], $passwordHash, $input['tipo'],
+                $input['telefono'] ?? null, $input['direccion'] ?? null, $input['fechaNacimiento'] ?? null,
+                date('Y-m-d H:i:s'), 'activo', $input['especialidad'], $input['titulo'], $input['experiencia'] ?? null
+            ];
+        } else {
+            // Admin u otro tipo
+            $sql = "INSERT INTO usuarios (nombre, cedula, email, password, tipo, telefono, direccion, fecha_nacimiento, fecha_registro, estado) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            $valores = [
+                $input['nombre'], $input['cedula'], $input['email'], $passwordHash, $input['tipo'],
+                $input['telefono'] ?? null, $input['direccion'] ?? null, $input['fechaNacimiento'] ?? null,
+                date('Y-m-d H:i:s'), 'activo'
+            ];
         }
-        
-        $sql .= ") VALUES (" . str_repeat('?,', count($valores) - 1) . "?)";
-        
         $stmt = $pdo->prepare($sql);
         $stmt->execute($valores);
-        
         $userId = $pdo->lastInsertId();
-        
         echo json_encode([
             'success' => true,
             'message' => 'Usuario registrado exitosamente',
             'user_id' => $userId
         ]);
-        
     } catch (PDOException $e) {
         http_response_code(500);
         echo json_encode(['error' => 'Error al registrar usuario: ' . $e->getMessage()]);
@@ -296,6 +317,24 @@ function eliminarUsuario($id) {
         http_response_code(500);
         echo json_encode(['error' => 'Error al eliminar usuario: ' . $e->getMessage()]);
     }
+}
+
+// Funciones de asistencia (implementación futura, separadas por claridad senior)
+function registrarAsistencia() {
+    http_response_code(501);
+    echo json_encode(['error' => 'Funcionalidad de asistencia no implementada aún']);
+}
+function obtenerAsistencia($id) {
+    http_response_code(501);
+    echo json_encode(['error' => 'Funcionalidad de consulta de asistencia no implementada aún']);
+}
+function actualizarAsistencia($id) {
+    http_response_code(501);
+    echo json_encode(['error' => 'Funcionalidad de actualización de asistencia no implementada aún']);
+}
+function eliminarAsistencia($id) {
+    http_response_code(501);
+    echo json_encode(['error' => 'Funcionalidad de eliminación de asistencia no implementada aún']);
 }
 
 // Función auxiliar para generar JWT (versión simplificada)
