@@ -78,14 +78,51 @@ function verificarSistema() {
     });
 }
 
+// Verificar sistema de asistencias
+function verificarAsistencias() {
+    console.log('🎯 === VERIFICACIÓN SISTEMA ASISTENCIAS ===');
+    
+    // Verificar datos
+    const materias = JSON.parse(localStorage.getItem('materias')) || [];
+    const asistencias = JSON.parse(localStorage.getItem('asistencias')) || [];
+    const usuarios = JSON.parse(localStorage.getItem('usuarios')) || [];
+    
+    console.log('📚 Materias:', materias.length);
+    console.log('📋 Asistencias:', asistencias.length);
+    console.log('👥 Usuarios:', usuarios.length);
+    
+    materias.forEach((mat, index) => {
+        console.log(`${index + 1}. ${mat.nombre} - ${mat.estudiantesInscritos.length} estudiantes`);
+    });
+    
+    // Verificar función principal
+    if (typeof abrirGestionAsistencias === 'function') {
+        console.log('✅ Función abrirGestionAsistencias disponible');
+    } else {
+        console.log('❌ Función abrirGestionAsistencias NO disponible');
+    }
+    
+    // Verificar usuario actual
+    const usuario = usuarioActual || JSON.parse(localStorage.getItem('usuarioActual'));
+    if (usuario) {
+        console.log(`👤 Usuario actual: ${usuario.email} (${usuario.tipo})`);
+    } else {
+        console.log('❌ No hay usuario activo');
+    }
+    
+    console.log('===========================================');
+}
+
 // Hacer las funciones disponibles globalmente para debugging
 window.limpiarDatos = limpiarDatos;
 window.verUsuarios = verUsuarios;
 window.testRegistro = testRegistro;
 window.verificarSistema = verificarSistema;
+window.verificarAsistencias = verificarAsistencias;
 
 console.log('🛠️ Herramientas de debug cargadas. Usa:');
 console.log('- limpiarDatos() - Limpia todo y recarga');
 console.log('- verUsuarios() - Muestra usuarios registrados');
 console.log('- testRegistro() - Prueba el registro');
 console.log('- verificarSistema() - Verifica que todo funcione');
+console.log('- verificarAsistencias() - Verifica sistema de asistencias');

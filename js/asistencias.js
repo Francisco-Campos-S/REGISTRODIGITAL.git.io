@@ -7,38 +7,97 @@ let horarios = JSON.parse(localStorage.getItem('horarios')) || [];
 
 // Función principal para abrir la gestión de asistencias
 function abrirGestionAsistencias() {
-    console.log('Abriendo gestión de asistencias...');
+    console.log('🎯 Abriendo gestión de asistencias...');
     
     const usuario = usuarioActual;
     if (!usuario) {
-        alert('Error: Usuario no identificado');
+        console.error('❌ Error: Usuario no identificado');
+        alert('Error: Usuario no identificado. Por favor, inicia sesión.');
         return;
     }
+    
+    console.log('👤 Usuario actual:', usuario.email, '- Tipo:', usuario.tipo);
     
     // Cargar datos necesarios
     cargarDatosAsistencias();
     
     const contentArea = document.getElementById('content-area');
     if (!contentArea) {
-        console.error('No se encontró el contenedor principal');
+        console.error('❌ No se encontró el contenedor principal');
         return;
     }
     
-    if (usuario.tipo === 'profesor') {
-        contentArea.innerHTML = crearInterfazProfesor();
-        inicializarInterfazProfesor();
-    } else {
-        contentArea.innerHTML = crearInterfazEstudiante();
-        inicializarInterfazEstudiante();
+    try {
+        if (usuario.tipo === 'profesor') {
+            console.log('👨‍🏫 Cargando interfaz de profesor...');
+            contentArea.innerHTML = crearInterfazProfesor();
+            inicializarInterfazProfesor();
+        } else {
+            console.log('👨‍🎓 Cargando interfaz de estudiante...');
+            contentArea.innerHTML = crearInterfazEstudiante();
+            inicializarInterfazEstudiante();
+        }
+        console.log('✅ Sistema de asistencias cargado correctamente');
+    } catch (error) {
+        console.error('❌ Error al cargar sistema de asistencias:', error);
+        contentArea.innerHTML = `
+            <div class="error-container">
+                <h2>❌ Error al cargar sistema de asistencias</h2>
+                <p>Hubo un problema al cargar el sistema. Detalles:</p>
+                <pre>${error.message}</pre>
+                <button onclick="location.reload()" class="btn btn-primary">Recargar página</button>
+            </div>
+        `;
     }
 }
 
 // Función para cargar datos de asistencias
 function cargarDatosAsistencias() {
+    console.log('📚 Cargando datos de asistencias...');
+    
     // Si no hay datos, inicializar con datos de ejemplo
     if (materias.length === 0) {
+        console.log('🔄 Inicializando datos de asistencia...');
         inicializarDatosAsistencia();
     }
+    
+    // Sincronizar con usuarios demo si están disponibles
+    const usuarios = JSON.parse(localStorage.getItem('usuarios')) || [];
+    console.log('👥 Usuarios encontrados:', usuarios.length);
+    
+    if (usuarios.length > 0) {
+        sincronizarConUsuarios(usuarios);
+    } else {
+        console.log('⚠️ No se encontraron usuarios. Usando datos por defecto.');
+    }
+    
+    console.log('📊 Materias disponibles:', materias.length);
+    materias.forEach(mat => {
+        console.log(`   - ${mat.nombre} (${mat.estudiantesInscritos.length} estudiantes)`);
+    });
+}
+
+// Sincronizar con los usuarios del sistema
+function sincronizarConUsuarios(usuarios) {
+    console.log('🔄 Sincronizando con usuarios del sistema...');
+    
+    const estudiantesRegistrados = usuarios.filter(u => u.tipo === 'estudiante');
+    console.log(`👨‍🎓 Estudiantes encontrados: ${estudiantesRegistrados.length}`);
+    
+    // Agregar estudiantes a las materias
+    materias.forEach(materia => {
+        materia.estudiantesInscritos = estudiantesRegistrados.map(est => ({
+            id: est.id,
+            nombre: est.nombreCompleto || `${est.nombre} ${est.apellido1 || ''} ${est.apellido2 || ''}`.trim(),
+            email: est.email,
+            cedula: est.cedula
+        }));
+        console.log(`📖 ${materia.nombre}: ${materia.estudiantesInscritos.length} estudiantes inscritos`);
+    });
+    
+    // Guardar cambios
+    localStorage.setItem('materias', JSON.stringify(materias));
+    console.log('✅ Datos de asistencia sincronizados correctamente');
 }
 
 // Inicializar datos de ejemplo para materias y horarios
