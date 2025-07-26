@@ -14,6 +14,9 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 function inicializarApp() {
+    // Recargar usuarios desde localStorage para asegurar sincronización con demo
+    usuarios = JSON.parse(localStorage.getItem('usuarios')) || [];
+    
     // Verificar si hay usuario logueado
     if (usuarioActual) {
         mostrarDashboard();
@@ -27,6 +30,12 @@ function inicializarApp() {
     
     // Cargar datos de ejemplo si es la primera vez
     cargarDatosEjemplo();
+}
+
+// Función utilitaria para recargar usuarios desde localStorage
+function recargarUsuarios() {
+    usuarios = JSON.parse(localStorage.getItem('usuarios')) || [];
+    return usuarios;
 }
 
 function configurarGitHubPages() {
@@ -154,6 +163,9 @@ function selectUserType(tipo) {
 function registrarEstudiante(e) {
     e.preventDefault();
     
+    // Recargar usuarios actuales desde localStorage
+    recargarUsuarios();
+    
     const formData = new FormData(e.target);
     const estudiante = {
         id: generarId(),
@@ -199,6 +211,9 @@ function registrarEstudiante(e) {
 // Registro de profesor
 function registrarProfesor(e) {
     e.preventDefault();
+    
+    // Recargar usuarios actuales desde localStorage
+    recargarUsuarios();
     
     const formData = new FormData(e.target);
     const profesor = {
@@ -246,6 +261,9 @@ function registrarProfesor(e) {
 // Iniciar sesión
 function iniciarSesion(e) {
     e.preventDefault();
+    
+    // Recargar usuarios actuales desde localStorage
+    recargarUsuarios();
     
     const formData = new FormData(e.target);
     const email = formData.get('email');
