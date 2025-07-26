@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RegistroDigital - Sistema de Registro Académico</title>
+    
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="Sistema moderno de registro académico para instituciones educativas. Gestión completa de estudiantes y profesores con dashboard interactivo.">
+    <meta name="keywords" content="registro académico, sistema educativo, gestión estudiantes, dashboard académico, GitHub Pages">
+    <meta name="author" content="Francisco Campos">
+    
+    <!-- Open Graph Meta Tags -->
+    <meta property="og:title" content="RegistroDigital - Sistema de Registro Académico">
+    <meta property="og:description" content="Plataforma moderna para el registro y gestión de estudiantes y profesores">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://francisco-campos-s.github.io/Generador_Carnets_CTP.git.io/">
+    <meta property="og:image" content="https://francisco-campos-s.github.io/Generador_Carnets_CTP.git.io/assets/preview.png">
+    
+    <!-- Twitter Card Meta Tags -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="RegistroDigital - Sistema de Registro Académico">
+    <meta name="twitter:description" content="Sistema moderno de registro académico con dashboard interactivo">
+    <meta name="twitter:image" content="https://francisco-campos-s.github.io/Generador_Carnets_CTP.git.io/assets/preview.png">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎓</text></svg>">
+    
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="css/styles.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Preconnect for performance -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="logo">
+                <i class="fas fa-graduation-cap"></i>
+                <span>RegistroDigital</span>
+            </div>
+            <nav class="nav">
+                <a href="#inicio" class="nav-link active">Inicio</a>
+                <a href="#registro" class="nav-link">Registro</a>
+                <a href="#login" class="nav-link">Iniciar Sesión</a>
+                <a href="#contacto" class="nav-link">Contacto</a>
+            </nav>
+            <div class="hamburger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section id="inicio" class="hero">
+        <div class="hero-content">
+            <h1>Sistema de Registro Académico Digital</h1>
+            <p>Plataforma moderna para el registro y gestión de estudiantes y profesores</p>
+            <div class="hero-buttons">
+                <button class="btn btn-primary" onclick="showRegistro()">
+                    <i class="fas fa-user-plus"></i>
+                    Registrarse
+                </button>
+                <button class="btn btn-secondary" onclick="showLogin()">
+                    <i class="fas fa-sign-in-alt"></i>
+                    Iniciar Sesión
+                </button>
+            </div>
+        </div>
+        <div class="hero-image">
+            <i class="fas fa-users-cog"></i>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features">
+        <div class="container">
+            <h2>Características del Sistema</h2>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <i class="fas fa-user-graduate"></i>
+                    <h3>Registro de Estudiantes</h3>
+                    <p>Sistema completo para el registro de estudiantes con toda su información académica</p>
+                </div>
+                <div class="feature-card">
+                    <i class="fas fa-chalkboard-teacher"></i>
+                    <h3>Registro de Profesores</h3>
+                    <p>Plataforma para profesores con gestión de materias y horarios</p>
+                </div>
+                <div class="feature-card">
+                    <i class="fas fa-chart-line"></i>
+                    <h3>Panel de Control</h3>
+                    <p>Dashboard administrativo con estadísticas y reportes en tiempo real</p>
+                </div>
+                <div class="feature-card">
+                    <i class="fas fa-shield-alt"></i>
+                    <h3>Seguridad</h3>
+                    <p>Sistema seguro con autenticación y protección de datos personales</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Registration Modal -->
+    <div id="registroModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('registroModal')">&times;</span>
+            <h2>Registro de Usuario</h2>
+            
+            <div class="user-type-selector">
+                <button class="type-btn active" onclick="selectUserType('estudiante')">
+                    <i class="fas fa-user-graduate"></i>
+                    Estudiante
+                </button>
+                <button class="type-btn" onclick="selectUserType('profesor')">
+                    <i class="fas fa-chalkboard-teacher"></i>
+                    Profesor
+                </button>
+            </div>
+
+            <!-- Formulario de Estudiante -->
+            <form id="formEstudiante" class="registro-form active">
+                <div class="form-group">
+                    <label for="nombreEstudiante">Nombre Completo</label>
+                    <input type="text" id="nombreEstudiante" name="nombre" required>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="cedulaEstudiante">Cédula</label>
+                        <input type="text" id="cedulaEstudiante" name="cedula" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="fechaNacimiento">Fecha de Nacimiento</label>
+                        <input type="date" id="fechaNacimiento" name="fechaNacimiento" required>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="emailEstudiante">Email</label>
+                        <input type="email" id="emailEstudiante" name="email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="telefonoEstudiante">Teléfono</label>
+                        <input type="tel" id="telefonoEstudiante" name="telefono" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="direccionEstudiante">Dirección</label>
+                    <textarea id="direccionEstudiante" name="direccion" required></textarea>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="carrera">Carrera</label>
+                        <select id="carrera" name="carrera" required>
+                            <option value="">Seleccionar carrera</option>
+                            <option value="ingenieria-sistemas">Ingeniería en Sistemas</option>
+                            <option value="medicina">Medicina</option>
+                            <option value="derecho">Derecho</option>
+                            <option value="administracion">Administración de Empresas</option>
+                            <option value="psicologia">Psicología</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="semestre">Semestre</label>
+                        <select id="semestre" name="semestre" required>
+                            <option value="">Seleccionar semestre</option>
+                            <option value="1">1er Semestre</option>
+                            <option value="2">2do Semestre</option>
+                            <option value="3">3er Semestre</option>
+                            <option value="4">4to Semestre</option>
+                            <option value="5">5to Semestre</option>
+                            <option value="6">6to Semestre</option>
+                            <option value="7">7mo Semestre</option>
+                            <option value="8">8vo Semestre</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="passwordEstudiante">Contraseña</label>
+                    <input type="password" id="passwordEstudiante" name="password" required>
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-full">
+                    <i class="fas fa-user-plus"></i>
+                    Registrar Estudiante
+                </button>
+            </form>
+
+            <!-- Formulario de Profesor -->
+            <form id="formProfesor" class="registro-form">
+                <div class="form-group">
+                    <label for="nombreProfesor">Nombre Completo</label>
+                    <input type="text" id="nombreProfesor" name="nombre" required>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="cedulaProfesor">Cédula</label>
+                        <input type="text" id="cedulaProfesor" name="cedula" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="fechaNacimientoProfesor">Fecha de Nacimiento</label>
+                        <input type="date" id="fechaNacimientoProfesor" name="fechaNacimiento" required>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="emailProfesor">Email</label>
+                        <input type="email" id="emailProfesor" name="email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="telefonoProfesor">Teléfono</label>
+                        <input type="tel" id="telefonoProfesor" name="telefono" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="direccionProfesor">Dirección</label>
+                    <textarea id="direccionProfesor" name="direccion" required></textarea>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="especialidad">Especialidad</label>
+                        <input type="text" id="especialidad" name="especialidad" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="titulo">Título Académico</label>
+                        <input type="text" id="titulo" name="titulo" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="experiencia">Años de Experiencia</label>
+                    <input type="number" id="experiencia" name="experiencia" min="0" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="passwordProfesor">Contraseña</label>
+                    <input type="password" id="passwordProfesor" name="password" required>
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-full">
+                    <i class="fas fa-chalkboard-teacher"></i>
+                    Registrar Profesor
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Login Modal -->
+    <div id="loginModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('loginModal')">&times;</span>
+            <h2>Iniciar Sesión</h2>
+            
+            <form id="loginForm" class="login-form">
+                <div class="form-group">
+                    <label for="loginEmail">Email</label>
+                    <input type="email" id="loginEmail" name="email" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="loginPassword">Contraseña</label>
+                    <input type="password" id="loginPassword" name="password" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="userType">Tipo de Usuario</label>
+                    <select id="userType" name="userType" required>
+                        <option value="">Seleccionar tipo</option>
+                        <option value="estudiante">Estudiante</option>
+                        <option value="profesor">Profesor</option>
+                        <option value="admin">Administrador</option>
+                    </select>
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-full">
+                    <i class="fas fa-sign-in-alt"></i>
+                    Iniciar Sesión
+                </button>
+
+                <div class="form-links">
+                    <a href="#" onclick="showRegistro()">¿No tienes cuenta? Regístrate aquí</a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>RegistroDigital</h3>
+                    <p>Sistema moderno de registro académico para instituciones educativas.</p>
+                </div>
+                <div class="footer-section">
+                    <h3>Enlaces</h3>
+                    <ul>
+                        <li><a href="#inicio">Inicio</a></li>
+                        <li><a href="#registro">Registro</a></li>
+                        <li><a href="#login">Iniciar Sesión</a></li>
+                        <li><a href="#contacto">Contacto</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3>Contacto</h3>
+                    <p><i class="fas fa-envelope"></i> info@registrodigital.com</p>
+                    <p><i class="fas fa-phone"></i> +1 (555) 123-4567</p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 RegistroDigital. Todos los derechos reservados.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/config.js"></script>
+    <script src="js/demo.js"></script>
+    <script src="js/script.js"></script>
+</body>
+</html>
